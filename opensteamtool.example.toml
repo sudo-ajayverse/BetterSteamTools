@@ -57,67 +57,9 @@ timeout_send_ms    = 10000
 timeout_recv_ms    = 10000
 
 [stats]
-# Automatically query https://stats.opensteamtool.com/{appid} for a recommended
-# SteamID when no Lua setStat(appid, "steamid") override exists.
-# Priority: setStat > stats API when enabled and valid > hardcoded preset SteamID.
-enable_api = true
+# Query stats API (Disabled for offline mode).
+enable_api = false
 
 [update]
-# Check for a newer BetterSteamTools build on startup. When a newer build is
-# found it is downloaded, verified (SHA-256) and staged next to Steam; the new
-# DLL loads on the next Steam launch. Set to false to disable the check entirely.
-enabled = true
-
-# Additional Lua config directories (optional).
-# Files are loaded after the default <Steam>/config/stplug-in folder.
-# The default folder is always loaded last so user files take priority.
-# Example — load a custom directory on another drive:
-#   [lua]
-#   paths = ["D:/my-steam-config/lua"]
-[lua]
-# paths = []
-
-# Optional library injection into game processes. Each [[inject]] entry is loaded
-# when every condition it sets matches the launch.
-# Example:
-#   [[inject]]
-#   path = "OpenSteamToolHook.dll"      # bare name resolves next to steam.exe; absolute path used as-is
-#   when_cmdline = "-my_special_hook"   # optional: require this substring in the launch command (default: any)
-#   when_appids = [1361510]             # optional: restrict to these appids (default: any)
-#   all_games = false                   # optional: true injects into every game, false only into Lua-added games (default: false)
-
-[cloud]
-# Optional Steam Cloud save redirection for unlocked ("lua") games, powered by
-# CloudRedirect (https://github.com/Selectively11/CloudRedirect).
-# When enabled, OpenSteamTool loads cloud_redirect.dll inside Steam, registers
-# every addappid() game as a redirected app, and routes their Steam Cloud RPCs
-# through CloudRedirect's cloud-save engine.
-#
-# Provider sign-in (Google Drive / OneDrive / local folder) is still done through
-# CloudRedirect's own companion app — OpenSteamTool only hosts the DLL.
+# Check for a newer BetterSteamTools build on startup (Disabled for offline mode).
 enabled = false
-# Path to cloud_redirect.dll. Absolute, or relative to the Steam root directory.
-# Defaults to "<Steam>/cloud_redirect.dll" when unset.
-# library = "cloud_redirect.dll"
-
-[remote]
-# Optional metadata mirror(s). Leave unset to use the built-in mirror chain,
-# which is tried in order until one responds:
-#   1. https://raw.githubusercontent.com/OpenSteam001/steam-monitor/{channel}/{component}/{sha256}.toml
-#   2. https://cdn.jsdelivr.net/gh/OpenSteam001/steam-monitor@{channel}/{component}/{sha256}.toml
-#   3. https://raw.githubusercontent.com/madoiscool/steam-monitor/{channel}/{component}/{sha256}.toml
-#   4. https://cdn.jsdelivr.net/gh/madoiscool/steam-monitor@{channel}/{component}/{sha256}.toml
-#   5. https://git.lua.tools/luatools/steam-monitor/raw/branch/{channel}/{component}/{sha256}.toml
-#
-# url_template may be a single string OR an array of strings. When set, it
-# REPLACES the built-in chain (the built-ins are not tried). Each entry must
-# contain all three placeholders: {channel}, {component}, and {sha256}.
-#
-# Single custom mirror:
-# url_template = "https://your.server/{channel}/{component}/{sha256}.toml"
-#
-# Multiple fallbacks (tried top to bottom):
-# url_template = [
-#   "https://git.lua.tools/luatools/steam-monitor/raw/branch/{channel}/{component}/{sha256}.toml",
-#   "https://raw.githubusercontent.com/madoiscool/steam-monitor/{channel}/{component}/{sha256}.toml",
-# ]

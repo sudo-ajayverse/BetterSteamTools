@@ -81,27 +81,8 @@ namespace ManifestClient {
     // ── fetch ─────────────────────────────────────────────────────
 
     static bool FetchActive(uint64_t gid, uint64_t* outCode) {
-        const Provider& p = *g_active;
-        const Config::ManifestTimeouts timeouts = Config::GetManifestTimeouts();
-
-        char urlLog[256];
-        std::snprintf(urlLog, sizeof(urlLog), p.urlTemplate, gid);
-
-        auto r = OSTPlatform::Http::Execute(
-            L"GET",
-            urlLog,
-            nullptr,
-            0,
-            nullptr,
-            timeouts.resolve,
-            timeouts.connect,
-            timeouts.send,
-            timeouts.recv);
-
-        LOG_MANIFEST_INFO("Manifest {} status={} gid={}", p.name, r.status, gid);
-
-        if (!r.ok || r.status != 200) return false;
-        return p.parse(r.body, outCode);
+        LOG_MANIFEST_INFO("Remote manifest fetching disabled, gid={}", gid);
+        return false;
     }
 
     // ── public ────────────────────────────────────────────────────

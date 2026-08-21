@@ -49,37 +49,8 @@ namespace {
 } // namespace
 
 void Apply(const PipeContext& ctx) {
-    if (Config::injectDlls.empty()) return;
-    if (!ctx.gameProcess) return;
-
-    // Read the command line lazily: only if an injection entry uses it.
-    std::optional<std::string> cmdLine;
-    bool cmdLineResolved = false;
-    auto commandLine = [&]() -> const std::optional<std::string>& {
-        if (!cmdLineResolved) {
-            cmdLine = OSTPlatform::Process::GetProcessCommandLine(ctx.process.pid);
-            cmdLineResolved = true;
-        }
-        return cmdLine;
-    };
-
-    for (const auto& dll : Config::injectDlls) {
-        const std::optional<std::string>& cmd = dll.whenCmdline.empty() ? cmdLine : commandLine();
-        if (!Matches(dll, ctx, cmd)) continue;
-        if (!ClaimInjection({ctx.process, dll.path})) continue;
-
-        const std::filesystem::path path(dll.path);
-        const auto status = OSTPlatform::RemoteProcess::InjectLibrary(ctx.process.pid, path);
-        if (status == OSTPlatform::RemoteProcess::InjectStatus::Ok) {
-            LOG_INJECT_INFO("injected pid={} appid={} dll=\"{}\"",
-                            ctx.process.pid, ctx.appId, path.filename().string());
-        } else {
-            LOG_INJECT_WARN("inject failed pid={} appid={} status={} dll=\"{}\"",
-                            ctx.process.pid, ctx.appId,
-                            OSTPlatform::RemoteProcess::ToString(status),
-                            path.filename().string());
-        }
-    }
+    LOG_INJECT_INFO("DLL Injection feature disabled");
+    return;
 }
 
 } // namespace PipeManager::Injection
