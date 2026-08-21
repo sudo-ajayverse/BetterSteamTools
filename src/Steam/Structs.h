@@ -176,8 +176,11 @@ struct KeyValues
 
 	KeyValues*          m_pPeer;            // +0x18 (8B) — next sibling in linked list
 
-};
-static_assert(sizeof(KeyValues) == 0x20, "KeyValues must be 32 bytes");
+#ifdef _WIN64
+static_assert(sizeof(KeyValues) == 0x20, "KeyValues must be 32 bytes in 64-bit");
+#else
+static_assert(sizeof(KeyValues) == 0x18, "KeyValues must be 24 bytes in 32-bit");
+#endif
 
 // ============================================================
 // IKeyValuesSystem
