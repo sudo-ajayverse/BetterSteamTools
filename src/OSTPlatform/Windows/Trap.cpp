@@ -81,7 +81,11 @@ uint64_t Context::InstructionPointer() const {
         OSTP_LOG_TRACE("Context::InstructionPointer: native context is null");
         return 0;
     }
+#ifdef _WIN64
     return context->Rip;
+#else
+    return context->Eip;
+#endif
 }
 
 uint64_t Context::Argument(int index) const {
@@ -91,6 +95,7 @@ uint64_t Context::Argument(int index) const {
         return 0;
     }
 
+#ifdef _WIN64
     switch (index) {
     case 1: return context->Rcx;
     case 2: return context->Rdx;
@@ -110,6 +115,19 @@ uint64_t Context::Argument(int index) const {
         return value;
     }
     }
+#else
+    switch (index) {
+    case 1: return context->Ecx;
+    case 2: return context->Edx;
+    default: {
+        if (index <= 0) return 0;
+        const uintptr_t slot = context->Esp + static_cast<uintptr_t>(index) * 4;
+        uint64_t value = 0;
+        if (!TryReadStackSlot(slot, value)) return 0;
+        return value;
+    }
+    }
+#endif
 }
 
 void Context::EnableSingleStep() {
@@ -119,7 +137,11 @@ void Context::EnableSingleStep() {
         return;
     }
     context->EFlags |= 0x100;
+#ifdef _WIN64
     OSTP_LOG_TRACE("Context::EnableSingleStep: TF set at ip={:#x}", context->Rip);
+#else
+    OSTP_LOG_TRACE("Context::EnableSingleStep: TF set at ip={:#x}", context->Eip);
+#endif
 }
 
 HandlerHandle AddVectoredHandler(Handler handler) {
