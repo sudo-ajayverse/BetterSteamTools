@@ -222,9 +222,7 @@ std::optional<size_t> QueryReadableRegionBytes(HANDLE process, PVOID address) {
     if (env < base) return std::nullopt;
 
     const size_t offset = static_cast<size_t>(env - base);
-    if (offset >= info.RegionSize) return std::nullopt;
-
-    return (std::min)(info.RegionSize - offset, kMaxEnvironmentBytes);
+    return (std::min)(static_cast<size_t>(info.RegionSize - offset), kMaxEnvironmentBytes);
 }
 
 std::optional<std::vector<wchar_t>> ReadEnvironmentAt(HANDLE process, PVOID environmentAddress) {

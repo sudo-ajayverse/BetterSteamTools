@@ -79,9 +79,11 @@ namespace OSTPlatform::Windows::NtAbi {
         uint32_t environment;         // 0x48
     };
 
+#ifdef _WIN64
     static_assert(offsetof(Peb, processParameters) == 0x20);
     static_assert(offsetof(RtlUserProcessParameters, commandLine) == 0x70);
     static_assert(offsetof(RtlUserProcessParameters, environment) == 0x80);
+#endif
     static_assert(offsetof(Peb32, processParameters) == 0x10);
     static_assert(offsetof(RtlUserProcessParameters32, commandLine) == 0x40);
     static_assert(offsetof(RtlUserProcessParameters32, environment) == 0x48);
